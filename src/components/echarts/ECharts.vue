@@ -9,7 +9,6 @@ const props = defineProps({
   height: { type: String, default: '400px' }, // 图表高度
   customClass: { type: String, default: '' }, // 允许传入自定义 class
   customStyle: { type: Object, default: () => ({}) }, // 允许传入自定义 style
-  name: String
 });
 
 const chartRef = ref(null);
@@ -60,8 +59,7 @@ const chartStyles = computed(() => ({
     :class="['echart-container', customClass]"
     :style="chartStyles"
   >
-  <div class="echart-name">{{ props.name }}</div>
-  <div 
+  <div
   :style="chartStyles"
 
   ref="chartRef"></div>
@@ -71,7 +69,7 @@ const chartStyles = computed(() => ({
 <style>
 .echart-container {
   min-width: 300px;
-  min-height: 200px;
+  min-height: 160px;
   background-color: transparent;
 
 }

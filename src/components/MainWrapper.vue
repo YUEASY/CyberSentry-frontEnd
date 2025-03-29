@@ -1,7 +1,7 @@
 <template>
     <div class="main-wrapper">
         <div class="icon-background">
-            <CPUModel></CPUModel>
+            <ShieldSwordIcon :size="450" />
         </div>
         <a-row class="content">
             <a-col :flex="2" class="siderbar">
@@ -12,49 +12,25 @@
                     <router-view />
                 </MainWindow>
             </a-col>
-            <div class="fixed-bottom-right">AI</div>
+            <AiWindow />
         </a-row>
     </div>
 </template>
 
 <script setup>
 import SiderBar from './SiderBar.vue';
-// import ShieldSwordIcon from 'vue-material-design-icons/ShieldSword.vue';
+import ShieldSwordIcon from 'vue-material-design-icons/ShieldSword.vue';
 import MainWindow from './MainWindow.vue';
-import CPUModel from './threejs/CPUModel.vue';
+import AiWindow from './AiWindow.vue';
 </script>
 
 <style scoped>
-
-.fixed-bottom-right {
-    position: fixed;
-    right: 20px; /* 右侧间距 */
-    bottom: 20px; /* 底部间距 */
-    height: 70px;
-    width: 70px;
-
-    font-size: 24px;
-    font-weight: bold;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: black;
-    color: rgba(246, 209, 91, 1.00);
-    border-radius: 10px;
-
-    box-shadow: 0px 0px 2px 1px rgba(255, 255, 255, 0.872);
-
-
-    cursor: pointer;
-}
-
 
 .main-wrapper {
     height: 100vh;
     width: 100vw;
     background-size: cover;
-    background-color: #212121;
+    background-color: #000000;
     position: relative;
 }
 
@@ -64,8 +40,8 @@ import CPUModel from './threejs/CPUModel.vue';
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 0;
-    opacity: 1; /* 调整透明度以确保内容可见 */
-    color: rgb(255, 183, 0);
+    opacity: 0.07; /* 调整透明度以确保内容可见 */
+    color: rgba(100, 120, 233, 0.878);
 }
 
 .content {
@@ -78,6 +54,7 @@ import CPUModel from './threejs/CPUModel.vue';
 
 .siderbar {
     /* background-color: #00b621; */
+    height: 100%;
     padding: 50px;
 }
 

@@ -1,25 +1,31 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, watch, defineProps } from 'vue';
 import ECharts from './ECharts.vue';
 
-const oneSecond = 1000;
-const fiveSeconds = 5 * oneSecond;
 const data = ref([]);
+
+const props = defineProps({
+    infos: Array
+})
+
 
 // 初始化数据
 const initializeData = () => {
-  const now = +new Date();
-  data.value = [[now, Math.random() * 300]];
+  props.infos.forEach(info => {
+    data.value.push([new Date(info.sample_time).getTime(), info.cpu_usage?.toFixed(2)]);
+  });
+  
 };
 
-// 更新数据
-const updateData = () => {
-  const now = +new Date();
-  data.value.push([now, Math.round((Math.random() - 0.5) * 20 + data.value[data.value.length - 1][1])]);
-  if (data.value.length > 20000) {
-    data.value.shift();
-  }
-};
+watch(() => props.infos, (newInfos) => {
+  data.value = []
+  newInfos.forEach(info => {
+    data.value.push([new Date(info.sample_time).getTime(), info.cpu_usage?.toFixed(2)]);
+  });
+  
+  chartOptions.value.series[0].data = data.value;
+}, { deep: true });
+
 
 // 初始化数据
 initializeData();
@@ -30,6 +36,10 @@ const chartOptions = ref({
     trigger: 'axis',
     position: function (pt) {
       return [pt[0], '10%'];
+    },
+    formatter: function (params) {
+      const value = params[0].data[1];
+      return `${value} %`;
     }
   },
   xAxis: {
@@ -39,13 +49,23 @@ const chartOptions = ref({
   },
   yAxis: {
     type: 'value',
+    max: 100, // 设置 y 轴最高值为 100
     boundaryGap: [0, '100%'],
     axisLabel: {
       color: 'white', // 设置 y 轴数字颜色为红色
       fontSize: 12, // 设置 y 轴数字字体大小
       fontWeight: 'bold', // 设置 y 轴数字字体加粗
       fontFamily: 'Arial', // 设置 y 轴数字字体
+      formatter: '{value}%' // 显示为百分比
+
+    },
+    splitLine: {
+      show: true, // 显示网格线
+      lineStyle: {
+        color: 'rgba(255, 255, 255, 0.2)', // 让网格线变淡 (白色, 透明度 0.2)
+        width: 1 // 细一点
       }
+    }
   },
   series: [
     {
@@ -54,33 +74,24 @@ const chartOptions = ref({
       smooth: true,
       symbol: 'none',
       areaStyle: {
-        color: 'rgba(246, 209, 91, 1.00)'
+        color: 'rgba(6, 82, 198, 0.783)'
 
       },      
-      lineStyle: {
-        color: 'yellow' // 设置线条颜色为黄色
-      },
+
       data: data.value
     }
   ]
 });
 
-// 每5秒更新一次数据
-onMounted(() => {
-  setInterval(() => {
-    updateData();
-    chartOptions.value.series[0].data = data.value;
-  }, fiveSeconds);
-});
+
 </script>
 
 <template>
   <ECharts 
     :options="chartOptions" 
-    width="500px" 
-    height="220px"
+    width="100%" 
+    height="233px"
     custom-class="custom-chart"
-    name="cpu"
     :custom-style="{}"
   />
 </template>
@@ -88,7 +99,8 @@ onMounted(() => {
 <style scoped>
 .custom-chart {
     background-color: transparent;
-    box-shadow: 0 4px 8px rgba(72, 71, 71, 0.393); /* 添加阴影 */
+    color: rgba(6, 82, 198, 0.783);
+    /* box-shadow: 0 4px 8px rgba(72, 71, 71, 0.393); 添加阴影 */
 
 }
 </style>

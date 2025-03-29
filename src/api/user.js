@@ -1,8 +1,27 @@
 import api from "./axios"
 
-const login = () => {
-    return  api.get("posts/1");
+const login = (email, code) => {
+    return api.post('/api/login', {
+        "email": email,
+        "code": code
+    });
 }
 
 
-export { login }
+const vercode = (email) => {
+    return api.post('/api/verification_code', {    
+        "email": email
+    });
+}
+
+const update = (user) => {
+    return api.post(`/api/user/${user.id}/update`, {
+            "email": user.email,
+            "phone": user.phone,
+            "role": user.role,
+            "is_locked": true
+    });
+}
+
+
+export { login, vercode, update }

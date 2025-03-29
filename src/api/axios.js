@@ -1,32 +1,15 @@
 import axios from 'axios';
 
 // 白名单，不需要 token 的接口
-const ignores = ['/login', '/register'];
+const ignores = ['/api/login', '/api/verification_code'];
 
-
-// 环境
-const ev = {
-    "dev": {
-        remoteUrl: "127.0.0.1",
-        remotePort: 8080
-    },
-    "prod": {
-        remoteUrl: "127.0.0.1",
-        remotePort: 8080
-    }
-}
-
-// 使用环境
-const useEnv = ev.dev
-
-const url = (a, b) => a + ":" + b
 
 // 创建 axios 实例
 const api = axios.create({
-    baseURL: url(useEnv.remoteUrl, useEnv.remotePort),
-    // timeout: 5000, // 请求超时时间
+  baseURL: '/api',
+  withCredentials: true
+  // timeout: 5000, // 请求超时时间
 });
-
 
 // 请求拦截器
 api.interceptors.request.use(
@@ -56,17 +39,17 @@ api.interceptors.response.use(
   (response) => {
     const res = response.data;
     // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 20000) {
-      // remind users
+    // if (res.code !== 20000) {
+    //   // remind users
 
-      // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if ([50008, 50012, 50014].includes(res.code)) {
-        // 清除 token 并跳转到登录页面
-        localStorage.removeItem('token');
-        window.location.href = '/login';
-      }
-      return Promise.reject(new Error(res.msg || 'Error'));
-    }
+    //   // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
+    //   if ([50008, 50012, 50014].includes(res.code)) {
+    //     // 清除 token 并跳转到登录页面
+    //     localStorage.removeItem('token');
+    //     window.location.href = '/login';
+    //   }
+    //   return Promise.reject(new Error(res.msg || 'Error'));
+    // }
     return res;
   },
   (error) => {
