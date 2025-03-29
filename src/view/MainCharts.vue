@@ -6,14 +6,15 @@ import DiskCharts from '@/components/echarts/DiskCharts.vue';
 import NetworkCharts from '@/components/echarts/NetworkCharts.vue';
 import { useSysMStore } from '@/stores/sys';
 import { onMounted, ref, shallowRef } from 'vue';
-import AiCharts from '@/components/echarts/AiCharts.vue';
-import { useMTLogStore } from '@/stores/mtlog';
+// import { useMTLogStore } from '@/stores/mtlog';
+import PowerCharts from '@/components/echarts/PowerCharts.vue';
+import TempCharts from '@/components/echarts/TempCharts.vue';
 
 const sys = useSysMStore()
 const infos = ref([])
 const lastInfo = ref([])
-const mtlog = useMTLogStore()
-const mthreadnum = ref(0)
+// const mtlog = useMTLogStore()
+// const mthreadnum = ref(0)
 const currentTime = ref(new Date().toLocaleTimeString());
 
 onMounted(() => {
@@ -29,23 +30,22 @@ onMounted(() => {
         } else {
             crisisValue.value = 0; 
         }
-        const datas = await mtlog.maliciousThreadLogs()
-        if (Array.isArray(datas)) {
-            mthreadnum.value = datas.length
-        }
+        // const datas = await mtlog.maliciousThreadLogs()
+        // if (Array.isArray(datas)) {
+        //     mthreadnum.value = datas.length
+        // }
     }, 1000 * 3);
 })
+const showPopup = ref(false)
 
-// 根据危机值获取进度条颜色
-const getProgressBarColor = (value) => {
-  if (value < 33) {
-    return 'green';
-  } else if (value < 66) {
-    return 'orange';
-  } else {
-    return 'red';
+const closePopup = () => {
+  showPopup.value = false
 }
-};
+
+const openPopup = () => {
+    showPopup.value = true
+}
+
 
 // 定义一个存储危机值的状态
 const crisisValue = ref(0);
@@ -67,30 +67,25 @@ const components = {
         <a-col :flex="7">
             <a-row>
             <a-col :flex="5" style="margin-top: 70px;">
-                <div class="time-container">
-                    <p class="time-text">{{ currentTime }}</p>
+                <div style="display: flex; align-items: center; margin-bottom: 50px;"> 
+                    <TempCharts  :infos="infos" />
+                    <PowerCharts  :infos="infos" />
                 </div>
 
-              <component :is="components[activeChart]" :infos="infos" />
-
-                <AiCharts style="margin-top: 35px;"/>
+                <component :is="components[activeChart]" :infos="infos" />
             </a-col>
             <a-col :flex="2">
-                    <p>
-                        总状态{{ crisisValue }}%
-                    </p>
-                    <div class="progress-bar-container">
-                        <div 
-                         class="progress-bar" 
-                         :style="{ width: crisisValue + '%', backgroundColor: getProgressBarColor(crisisValue) }"
-                        ></div>
-                    </div>
-                    <p style="margin-top: 10px;">
-                        温度：{{ lastInfo.temperature }}℃
-                    </p>
-                    <p style="margin-top: 10px;">
-                        恶意线程个数：{{ mthreadnum }}
-                    </p>
+
+                <p style="margin-top: 60px; padding: 10px;">{{ currentTime }}</p>
+                <p style="margin-top: 10px; cursor: pointer; width: 100px; padding: 10px;" class="mthread" @click="openPopup">
+                    恶意线程
+                </p>
+                <div v-if="showPopup" class="overlay" @click="closePopup"></div>
+                <div v-if="showPopup" class="popup">
+                    
+
+
+                </div>
 
                 <div class="app-detailed-body">
                     <div 
@@ -100,7 +95,7 @@ const components = {
                         CPU
                         <div class="detail-item-data">{{ lastInfo?.cpu_usage?.toFixed(2) }} %</div>
                     </div>
-                    <div 
+                    <div
                         class="detail-item" 
                         :class="{ active: activeChart === 'MemoryLineCharts'}"
                         @click="activeChart = 'MemoryLineCharts'">
@@ -112,33 +107,68 @@ const components = {
                         :class="{ active: activeChart === 'DiskCharts'}"
                         @click="activeChart = 'DiskCharts'">
                         磁盘
-                        <div class="detail-item-data">{{ lastInfo?.network_upload?.toFixed(2) }} MB/s </div>
+                        <div class="detail-item-data">{{ lastInfo?.disk_usage?.toFixed(2) }} MB/s </div>
                     </div>
                     <div 
                         class="detail-item" 
                         :class="{ active: activeChart === 'NetworkCharts'}"
                         @click="activeChart = 'NetworkCharts'">
-                        磁盘网络
-                        <div class="detail-item-data">{{ lastInfo?.network_download?.toFixed(2) }} MB/s</div>
+                        网络
+                        <div class="detail-item-data">{{ lastInfo?.network_download?.toFixed(2) }}MB/s | {{ lastInfo?.network_upload?.toFixed(2) }}MB/s </div>
                     </div>
-                </div>
-                <div 
-                    class="ai-item" 
-                >
-                    AI记录
                 </div>
             </a-col> 
             </a-row>
 
         </a-col>
         <a-col :flex="3" >
-            <AppList />
+            <AppList :crisisValue="crisisValue"/>
         </a-col>
     </a-row>
 </template>
 
 
 <style scoped>
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* 半透明黑色背景 */
+  z-index: 999; /* 确保覆盖内容 */
+}
+
+.mthread:hover {
+    background-color: #81818150;
+}
+
+.mthread:active {
+    background-color: #81818195;
+}
+
+
+/* 弹出框 */
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* 居中 */
+  background: rgb(0, 0, 0);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(232, 232, 232, 0.2);
+  text-align: center;
+  z-index: 1000; /* 确保在遮罩层上方 */
+  width: 500px;
+  height: 700px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
 
 .time-text {
     font-size: 24px;
@@ -180,11 +210,7 @@ const components = {
 }
 
 .app-detailed-body {
-  display: flex;
-  flex-wrap: wrap; /* 允许换行 */
-  justify-content: space-between; /* 让元素均匀分布 */
-  gap: 10px; /* 控制元素之间的间距 */
-  margin-top: 40px;
+  margin-top: 250px;
   margin-right: 20px;
 }
 
@@ -192,12 +218,10 @@ p {
     color: rgba(233, 220, 167, 0.877);
     font-size: 20px;
     font-weight: 600;
-
 }
 
 /* 每个数据项 */
 .detail-item{
-  flex: 0 0 calc(50% - 10px); /* 每个元素占 50% 宽度，并减去间距 */
   box-sizing: border-box; /* 确保 padding 不影响宽度 */
   padding: 10px;
   border: 1px solid rgba(233, 220, 167, 0.877);
@@ -208,6 +232,9 @@ p {
   font-size: 16px;
   box-shadow: 0 0 8px rgb(192, 182, 151);
   cursor: pointer;
+  margin-top: 10px;
+  margin-bottom: 11px;
+
 }
 
 .detail-item.active {

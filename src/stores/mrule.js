@@ -9,7 +9,7 @@ export const useMRuleStore = defineStore('mrule', {
     actions: {
         mruleInfo: async (app_id) => {
             const resp = await mruleInfo(app_id)
-        
+            console.log(JSON.stringify(resp, null, 2))
             if (resp.result.status === 'success') {
                 return resp.result.data
             }
@@ -24,7 +24,6 @@ export const useMRuleStore = defineStore('mrule', {
         },
         modiMrule: async (app) => {
             const resp = await modiMrule(app)
-            console.log(JSON.stringify(resp, null, 2))
             if (resp.result.status === 'success') {
                 return resp.result.data
             }

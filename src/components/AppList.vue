@@ -1,15 +1,17 @@
 <script setup>
 import { useAppRMStore } from '@/stores/apprm';
 import { useMRuleStore } from '@/stores/mrule';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted,defineProps } from 'vue';
 import defineIcon from '../../public/icon.png'
 
 import CheckboxBlankBadge from 'vue-material-design-icons/CheckboxBlankBadge.vue';
 import Cpu64Bit from 'vue-material-design-icons/Cpu64Bit.vue';
 import Memory from 'vue-material-design-icons/Memory.vue';
 
+const props = defineProps({
+    crisisValue: Number
+})
 
-// 定义一个存储当前时间的状态
 
 onMounted(() => {
   setInterval(async () => {
@@ -60,10 +62,32 @@ const selectApp = async (app_id, type) => {
     openPopup()
 }
 
+// 根据危机值获取进度条颜色
+const getProgressBarColor = (value) => {
+  if (value < 33) {
+    return 'green';
+  } else if (value < 66) {
+    return 'orange';
+  } else {
+    return 'red';
+}
+};
+
 </script>
 
 <template>
     <div style="margin-top: 40px;">
+        <div style="display: flex; align-items: center;">
+            <p >
+                总状态{{ props.crisisValue }}%
+            </p>
+            <div class="progress-bar-container">
+                <div 
+                    class="progress-bar" 
+                    :style="{ width: props.crisisValue + '%', backgroundColor: getProgressBarColor(props.crisisValue) }"
+                ></div>
+            </div>
+        </div>
         <ul>
             <li class="head">
                 <CheckboxBlankBadge class="head-icon" :size="30"/>
@@ -470,6 +494,7 @@ p {
 }
 
 .progress-bar-container {
+    
     width: 220px;
     height: 15px;
     background-color: #9b9b9b;

@@ -28,6 +28,7 @@ export const useUserStore = defineStore("user", {
                 this.id = data.id;
 
                 localStorage.setItem('token', resp.result.token)
+                localStorage.setItem('user', JSON.stringify(resp.result.data))
             }
             
             return resp.result.status
@@ -55,6 +56,20 @@ export const useUserStore = defineStore("user", {
             this.last_login_ip = "";
             this.last_login_time = "";
             this.id = -1;
+        },
+        userinfo () {
+            const userStr = localStorage.getItem('user')
+            if (userStr !== null) {
+                const data = JSON.parse(userStr)
+                this.user_id = data.user_id;
+                this.username = data.username;
+                this.role = data.role;
+                this.email = data.email;
+                this.phone = data.phone;
+                this.last_login_ip = data.last_login_ip;
+                this.last_login_time = data.last_login_time;
+                this.id = data.id;
+            }
         }
 
     }

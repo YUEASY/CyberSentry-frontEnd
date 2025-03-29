@@ -37,49 +37,48 @@ onMounted(() => {
 const chartOptions = ref({
   tooltip: {
     trigger: 'axis',
-    position: function (pt) {
-      return [pt[0], '10%'];
-    },
-    formatter: function (params) {
-        const value = params[0].data[1];
-      const time = params[0].data[0]; // X 轴时间
-      return `时间：${time}<br>分数：${value}`;
+    axisPointer: {
+      type: 'shadow'
     }
   },
   grid: {
-    left: '10%',
-    right: '10%',
-    top: '10%',
-    bottom: '10%'
+    top: 80,
+    bottom: 30
   },
   xAxis: {
-    type: 'time',
-    axisLine: { show: true },  
-    axisLabel: {
-      color: 'white' ,
-      formatter: (value) => {
-        return new Date(value).toLocaleTimeString(); 
+    type: 'value',
+    position: 'top',
+    splitLine: {
+      lineStyle: {
+        type: 'dashed'
       }
-    },
-    splitLine: { show: false } 
+    }
   },
   yAxis: {
-    axisLine: { show: true },  
-    axisLabel: {
-      color: 'white' // 设置 Y 轴数字颜色
-    },
-    splitLine: { show: false } 
+    type: 'category',
+    axisLine: { show: false },
+    axisLabel: { show: false },
+    axisTick: { show: false },
+    splitLine: { show: false },
   },
-series: [
+  series: [
     {
-        symbolSize: 20,
-        data: data.value,
-        type: 'scatter',
-        itemStyle: {
-            color: 'rgba(233, 220, 167, 0.877)' // 设置球体颜色为蓝色
-        }
+      name: '分数',
+      type: 'bar',
+      stack: 'Total',
+      label: {
+        show: true,
+        formatter: '{b}'
+      },
+      data: [
+        0.2,
+        0.44,
+        0.08,
+        0.47,
+        0.18
+      ]
     }
-]
+  ]
 });
 
 </script>

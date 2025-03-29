@@ -17,13 +17,13 @@
                             <div class="post-ai" v-html="p.content"></div>
                             <div class="line"></div>
                         </div>
-                    
                 </div>
             </div>
         </a-scrollbar>
         <div :class="[ aiPosts.posts.length == 0 ? 
               !props.isExpanded ? 'input-container' : 'input-container-large' :
               !props.isExpanded ? 'input-container-down' : 'input-container-down-large' ]">
+
             <input type="text" placeholder="输入消息..." v-model="aiPosts.ask" :disabled="aiApi.loading"/>
             <Send class="send-button" :size="24" @click="sendAks" v-if="!aiApi.loading"/>
             <a-spin dot v-else class="send-button"></a-spin>

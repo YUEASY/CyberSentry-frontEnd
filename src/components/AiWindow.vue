@@ -131,7 +131,7 @@ const togglePopup = () => {
 }
 
 .expanded-popup-large {
-    width: 1520px;
+    width: 1300px;
     height: 885px;
     border-radius: 20px;
     background-color: #000;

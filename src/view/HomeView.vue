@@ -246,7 +246,6 @@ const login = () => {
   }
 }
 
-
 const initPreloader = () => {
   const preloader = document.querySelector('#preloader');
   if (preloader) {

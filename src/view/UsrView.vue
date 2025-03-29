@@ -1,37 +1,48 @@
 <template>
     <div class="usr-wrapper">
-        <div v-if="!modiShow">
-            <a-avatar :size="32" shape="square">{{ user.username }}</a-avatar>
-            <div class="usr-container">
-                <div class="usr-head">name</div>
-                <div class="usr-body">{{ user.username }}</div>
-            </div>
-            <div class="usr-container">
-                <div class="usr-head">email</div>
-                <div class="usr-body">{{ user.email }}</div>
-            </div>
-            <div class="usr-container">
-                <div class="usr-head">phone</div>
-                <div class="usr-body">{{ user.phone }}</div>
-            </div>
-            <div class="usr-container">
-                <div class="modi-button" @click="ModiShow">编辑</div>
-            </div>
-        </div>
-        <div v-else class="modi-div">
-            <div class="usr-container">
-                <div class="usr-head" >phone</div>
-                <a-input v-model="phone" class="name-input" />
-            </div>
+        <a-row>
+            <a-col :flex="4">
+                <div v-if="!modiShow">
+                    <a-avatar :size="32" shape="square">{{ user.username }}</a-avatar>
+                    <div class="usr-container">
+                        <div class="usr-head">name</div>
+                        <div class="usr-body">{{ user.username }}</div>
+                    </div>
+                    <div class="usr-container">
+                        <div class="usr-head">email</div>
+                        <div class="usr-body">{{ user.email }}</div>
+                    </div>
+                    <div class="usr-container">
+                        <div class="usr-head">phone</div>
+                        <div class="usr-body">{{ user.phone }}</div>
+                    </div>
+                    <div class="usr-container">
+                        <div class="modi-button" @click="ModiShow">编辑</div>
+                    </div>
+                </div>
+                <div v-else class="modi-div">
+                    <div class="usr-container">
+                        <div class="usr-head" >phone</div>
+                        <a-input v-model="phone" class="name-input" />
+                    </div>
 
-            <div class="usr-container">
-                <div class="modi-button" @click="() => (ModiShow())">保存</div>
-            </div>
-        </div>
+                    <div class="usr-container">
+                        <div class="modi-button" @click="() => (ModiShow())">保存</div>
+                    </div>
+                </div>
+            </a-col>
+            <a-col :flex="6">
+                <div>
+                    <div>操作记录</div>
+                    <ListComponent />
+                </div>
+            </a-col>    
+        </a-row>
     </div>
 </template>
 
 <script setup>
+import ListComponent from '@/components/ListComponent.vue';
 import { useUserStore } from '@/stores/user';
 import { ref } from 'vue';
 

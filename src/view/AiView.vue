@@ -2,12 +2,14 @@
     <div 
         class="fixed-bottom-right expanded-popup-large"
     >
+
         <div class="popup-content">
             <div class="popup-head-large">
                 <AiModel />
             </div>
             <AiContent :is-expanded="true" />
         </div>
+
     </div>
 </template>
 
@@ -25,7 +27,6 @@ import AiModel from '@/components/AiModel.vue';
     justify-content: center;
     align-items: center;
     padding-top: 20px;
-    padding-left: 20px;
     width:90%;
 }
 
@@ -64,7 +65,7 @@ import AiModel from '@/components/AiModel.vue';
 
 
 .expanded-popup-large {
-    width: 1520px;
+    width: 1300px;
     height: 885px;
     border-radius: 20px;
     background-color: #000;
@@ -78,7 +79,6 @@ import AiModel from '@/components/AiModel.vue';
     height: 100%;
     color: white;
     box-shadow: none;
-
 }
 
 </style>

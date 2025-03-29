@@ -57,7 +57,7 @@ const handleLogout = () => {
     </template>
     <template #default>
         <div class="user-info">
-            <a-avatar :size="32" shape="square">{{ user.username }}</a-avatar>
+            <a-avatar :size="32" shape="square"><IconUser /></a-avatar>
             <div class="user-font">
                 <div class="username">{{ user.username }}</div>
                 <div class="useremail">@{{ user.email }}</div>
