@@ -1,35 +1,37 @@
-import { appInfoId, appInfos } from "@/api/app";
-import { defineStore } from "pinia";
+import { appInfoId, appInfos } from "@/api/app"
+import { defineStore } from "pinia"
 
-export const useAppInfoStore = defineStore('app', {
+export const useAppInfoStore = defineStore("app", {
     state: () => {
         return {
             id: -1,
             app_name: "",
             executable_path: "",
             icon_path: "",
-            list: '',
+            list: [],
         }
     },
-    actions: () => {
-        appInfoId: async (id) => {
+    actions: {
+        async appInfoId(id) {
             const resp = await appInfoId(id)
-            if (resp.status === "success") {
-                const data = resp.data
-                id = data.id
-                app_name = data.app_name
-                executable_path = data.executable_path
-                icon_path = data.icon_path
+            if (resp.result && resp.result.status === "success") {
+                const data = resp.result.data
+                this.id = data.id
+                this.app_name = data.app_name
+                this.executable_path = data.executable_path
+                this.icon_path = data.icon_path
+                return data
             }
-            return resp.status
-        };
-
-        appInfos: async () => {
+            return "error"
+        },
+        async appInfos() {
             const resp = await appInfos()
-            if (resp.status === "success") {
-                list = resp.data
+            if (resp.result && resp.result.status === "success") {
+                this.list = resp.result.data
+                return resp.result.data
             }
-            return resp.status
-        }
-    }
+            return "error"
+        },
+    },
 })
+

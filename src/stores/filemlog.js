@@ -1,7 +1,7 @@
-import { fileModiLogs, fileModiLogsId } from "@/api/filemlog";
-import { defineStore } from "pinia";
+import { fileModiLogs, fileModiLogsId } from "@/api/filemlog"
+import { defineStore } from "pinia"
 
-export const useFileMLogStore = defineStore('filemlog', {
+export const useFileMLogStore = defineStore("filemlog", {
     state: () => {
         return {
             id: -1,
@@ -9,23 +9,23 @@ export const useFileMLogStore = defineStore('filemlog', {
             file_path: "",
             operation_type: "",
             file_hash: "",
-            alert_time: ""
+            alert_time: "",
         }
     },
-    actions: () => {
-        fileModiLogsId: async (id) => {
+    actions: {
+        async fileModiLogsId(id) {
             const resp = await fileModiLogsId(id)
-            if (resp.status === 'success') {
+            if (resp.status === "success") {
                 return resp.data
             }
             return resp.status
-        } 
-        fileModiLogs: async () => {
+        },
+        async fileModiLogs() {
             const resp = await fileModiLogs()
-            if (resp.status === 'success') {
+            if (resp.status === "success") {
                 return resp.data
             }
             return resp.status
-        }
-    }
+        },
+    },
 })
