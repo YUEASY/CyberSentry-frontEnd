@@ -11,7 +11,7 @@ import HeadSnowflake from 'vue-material-design-icons/HeadSnowflake.vue';
 import Snail from 'vue-material-design-icons/Snail.vue';
 import UsrView from "@/view/UsrView.vue";
 import AiView from "@/view/AiView.vue";
-
+import AppDetailView from "@/view/AppDetailView.vue"
 
 
 const routes = [
@@ -48,8 +48,12 @@ const routes = [
     icon: AccountCogOutlineIcon,
     selectedIcon: AccountCogIcon
 
+  },
+  {
+    path: "/apps/:id",
+    component: AppDetailView,
+    meta: { hideInMenu: true },
   }
-
 ]
 
 
