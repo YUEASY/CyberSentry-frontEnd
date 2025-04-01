@@ -10,21 +10,24 @@ const fileId = (id) => {
 
 const fileEncrypt = (file) => {
     return api.post('/api/files/encrypt', {
-        body: JSON.stringify({
-            "file_id": file.id,
-            "secret_key": file.secretKey
-        })
+        "path": file.path,
+        "secret_key": file.secret_key
     })
 }
 
 const fileDecrypt = (file) => {
     return api.post('/api/files/decrypt', {
-        body: JSON.stringify({
-            "file_id": file.id,
-            "secret_key": file.secretKey
-        })
+            "path": file.path,
+            "secret_key": file.secret_key
+    })
+}
+
+const fileDelete = (file) => {
+    return api.post('/api/files/decrypt', {
+            "path": file.path,
     })
 }
 
 
-export {files, fileId, fileEncrypt, fileDecrypt}
+
+export {files, fileId, fileEncrypt, fileDecrypt, fileDelete}

@@ -1,159 +1,257 @@
 <template>
-    <!-- 小按钮（默认显示） -->
+    <!-- Floating button (when collapsed) -->
     <div 
-        v-if="!showPopup" 
-        class="fixed-bottom-right small-btn" 
-        @click="togglePopup"
+      v-if="!showPopup" 
+      class="ai-floating-button" 
+      @click="togglePopup"
+      :class="{ 'pulse-animation': hasNewMessages }"
     >
-        <HeadSnowflakeOutline :size="36" />
+      <div class="button-content">
+        <HeadSnowflake size="24" />
+        <span class="button-text">AI 助手</span>
+      </div>
     </div>
-
-    <!-- 展开后的大弹窗 -->
+  
+    <!-- AI Chat Window (when expanded) -->
     <div 
-        v-if="showPopup" 
-        class="fixed-bottom-right"
-        :class="[!isExpanded ? 'expanded-popup' : 'expanded-popup-large']"
+      v-if="showPopup" 
+      class="ai-window"
+      :class="[!isExpanded ? 'window-normal' : 'window-expanded']"
     >
-        <div v-if="!isExpanded" class="popup-content">
-            <div class="popup-head">
-                <AiModel />
-                <div>
-                    <UnfoldMoreVertical :size="32" class="head-icon" @click="expandContent"/>
-                    <ChevronDown :size="32" class="head-icon" @click="togglePopup"/>
-                </div>
-            </div>
-            <AiContent 
-                :is-expanded="isExpanded" 
-                :ai-content-class="{
-                    width: '100%',
-                    height: '100%',}"/>
+      <!-- Window header -->
+      <div class="window-header" :class="{ 'header-expanded': isExpanded }">
+        <div class="header-left">
+          <div class="header-icon">
+            <HeadSnowflake size="20" />
+          </div>
+          <div class="header-title">AI 安全助手</div>
         </div>
-        <div v-else class="popup-content">
-            <div class="popup-head-large">
-                <UnfoldMoreVertical :size="32" class="head-icon" @click="expandContent"/>
-                <AiModel />
-                <ChevronDown :size="32" class="head-icon" @click="togglePopup"/>
-            </div>
-            <AiContent :is-expanded="isExpanded" />
+        
+        <div class="header-center" v-if="isExpanded">
+          <AiModel />
         </div>
+        
+        <div class="header-actions">
+          <button class="action-button" @click="expandContent" :title="isExpanded ? '收起' : '展开'">
+            <Maximize2 v-if="!isExpanded" size="18" />
+            <Minimize2 v-else size="18" />
+          </button>
+          <button class="action-button" @click="togglePopup" title="关闭">
+            <X size="18" />
+          </button>
+        </div>
+      </div>
+      
+      <!-- Window content -->
+      <div class="window-content">
+        <AiContent 
+          :is-expanded="isExpanded" 
+          :ai-content-class="contentClass"
+        />
+      </div>
     </div>
-</template>
-
-<script setup>
-import { ref } from 'vue';
-import ChevronDown from 'vue-material-design-icons/ChevronDown.vue';
-import UnfoldMoreVertical from 'vue-material-design-icons/UnfoldMoreVertical.vue';
-import AiContent from './AiContent.vue';
-import AiModel from './AiModel.vue';
-import HeadSnowflakeOutline from 'vue-material-design-icons/HeadSnowflakeOutline.vue';
-
-
-const showPopup = ref(false);
-const isExpanded = ref(false);
-
-const expandContent = () => {
+  </template>
+  
+  <script setup>
+  import { ref, computed, watch } from 'vue';
+  import { HeadSnowflake, Maximize2, Minimize2, X } from 'lucide-vue-next';
+  import AiContent from './AiContent.vue';
+  import AiModel from './AiModel.vue';
+  import { useAiPostsStore } from '@/stores/aiPosts';
+  
+  const showPopup = ref(false);
+  const isExpanded = ref(false);
+  const hasNewMessages = ref(false);
+  const aiPosts = useAiPostsStore();
+  
+  // Toggle expanded state
+  const expandContent = () => {
     isExpanded.value = !isExpanded.value;
-}
-
-// 切换展开状态
-const togglePopup = () => {
+  };
+  
+  // Toggle popup visibility
+  const togglePopup = () => {
     showPopup.value = !showPopup.value;
-    isExpanded.value = false;
-};
-</script>
-
-<style scoped>
-.head-icon {
-    color: rgba(246, 209, 91, 1.00);
-    cursor: pointer;
-}
-
-.popup-head-large {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 20px;
-    padding-left: 20px;
-    width: 95%;
-}
-
-
-.popup-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 20px;
-    padding-left: 20px;
-    width: 90%;
-}
-
-/* 小按钮 */
-.fixed-bottom-right {
+    if (!showPopup.value) {
+      isExpanded.value = false;
+    }
+    hasNewMessages.value = false;
+  };
+  
+  // Watch for new messages to trigger notification
+  watch(() => aiPosts.posts.length, (newLength, oldLength) => {
+    if (newLength > oldLength && !showPopup.value) {
+      hasNewMessages.value = true;
+    }
+  });
+  
+  // Computed class for content
+  const contentClass = computed(() => ({
+    width: '100%',
+    height: '100%',
+  }));
+  </script>
+  
+  <style scoped>
+  /* Floating button */
+  .ai-floating-button {
     position: fixed;
-    right: 7px;
+    right: 20px;
     bottom: 20px;
+    background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+    border: 1px solid #3a3a3a;
+    border-radius: 50px;
+    padding: 12px 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
-    font-weight: bold;
-    color: rgb(255, 255, 255);
-    background-color: #000;
-    /* box-shadow: 0px 0px 4px 2px rgba(255, 255, 255, 0.872); */
-    transition: all 0.3s ease-in-out;
-    transform-origin: bottom right;
-    animation: expand 0.3s forwards;
-}
-
-/* 小按钮的尺寸 */
-.small-btn {
-    width: 70px;
-    height: 70px;
-    border-radius: 10px;
     cursor: pointer;
-}
-
-.small-btn:hover {
-    background-color: #81818150;
-}
-
-.small-btn:active {
-    background-color: #81818195;
-}
-
-/* 展开后的大弹窗 */
-.expanded-popup {
-    width: 450px;
-    height: 500px;
-    border-radius: 20px;
-    background-color: #000;
-    box-shadow: 0px 0px 1px 1px rgba(238, 151, 151, 0.872);
-}
-
-.expanded-popup-large {
-    width: 1300px;
-    height: 885px;
-    border-radius: 20px;
-    background-color: #000;
-    /* box-shadow: 0px 0px 5px 2px rgba(255, 255, 255, 0.872); */
-}
-
-@keyframes expand {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    z-index: 1000;
+  }
+  
+  .ai-floating-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(135deg, #3a3a3a, #2a2a2a);
+  }
+  
+  .button-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #f6d15b;
+  }
+  
+  .button-text {
+    font-weight: 500;
+    font-size: 15px;
+    color: #ffffff;
+  }
+  
+  /* Pulse animation for new messages */
+  .pulse-animation {
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(246, 209, 91, 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(246, 209, 91, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(246, 209, 91, 0);
+    }
+  }
+  
+  /* AI Window */
+  .ai-window {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    background-color: #1a1a1a;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    border: 1px solid #3a3a3a;
+    overflow: hidden;
+    z-index: 1000;
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  @keyframes slideUp {
     from {
-        transform: scale(0);
+      opacity: 0;
+      transform: translateY(20px);
     }
     to {
-        transform: scale(1);
+      opacity: 1;
+      transform: translateY(0);
     }
-}
-
-/* 弹窗内容 */
-.popup-content {
-    width: 100%;
-    height: 100%;
-    color: white;
-    box-shadow: none;
-
-}
-
-</style>
+  }
+  
+  .window-normal {
+    width: 380px;
+    height: 550px;
+  }
+  
+  .window-expanded {
+    width: 80vw;
+    height: 882px;
+    max-width: 1200px;
+    max-height: 800px;
+  }
+  
+  /* Window header */
+  .window-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background-color: #2a2a2a;
+    border-bottom: 1px solid #3a3a3a;
+  }
+  
+  .header-expanded {
+    padding: 20px;
+  }
+  
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .header-icon {
+    color: #f6d15b;
+  }
+  
+  .header-title {
+    font-weight: 600;
+    font-size: 16px;
+    color: #ffffff;
+  }
+  
+  .header-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .header-actions {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .action-button {
+    background-color: transparent;
+    color: #a0a0a0;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .action-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+  }
+  
+  /* Window content */
+  .window-content {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+  </style>
+  
+  

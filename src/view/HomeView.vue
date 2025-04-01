@@ -14,36 +14,71 @@
         </nav>
         <h1 class="sitename login" @click="showPopup = true">登录</h1>
 
+        <!-- Overlay for modal background -->
         <div v-if="showPopup" class="overlay" @click="closePopup"></div>
-      <!-- 弹出框 -->
-      <div v-if="showPopup" class="popup">
-        <div class="popup-title">邮箱</div>
         
-          <div>
-            <div class="ver-code-wrapper">
-
-              <a-input v-model="email" :style="{width:'220px', 'margin-bottom': '10px'}" placeholder="输入邮箱" allow-clear>
-                <template #prefix>
-                  <EmailEditOutline />
-                </template>
-              </a-input>
-                <div v-if="!verStatus" class="ver-code-button" @click="vercode">获取验证码</div>
-                <div v-else class="ver-code-button-true">
-                    请{{ countdown }}秒后重新发送
-                </div>
+        <!-- Enhanced Login Popup -->
+        <div v-if="showPopup" class="login-popup" @keyup.enter="login">
+          <div class="popup-header">
+            <div class="popup-logo">
+              <i class="bi bi-shield-lock"></i>
             </div>
-            <a-space style="margin-right: 30px;">
-              <a-typography-text style="width: 40px">code:</a-typography-text>
-              <a-verification-code v-model="value" style="width: 220px;" :length="4" />
-            </a-space>
-
+            <h2 class="popup-title">用户登录</h2>
+            <p class="popup-subtitle">安全监控系统</p>
+            <button class="close-button" @click="closePopup">
+              <i class="bi bi-x"></i>
+            </button>
+          </div>
+          
+          <div class="popup-body">
+            <!-- Email input -->
+            <div class="form-row">
+              <div class="form-label">邮箱地址</div>
+              <div class="form-input">
+                <a-input 
+                  v-model="email" 
+                  placeholder="请输入您的邮箱" 
+                  allow-clear
+                  class="styled-input"
+                />
+              </div>
+            </div>
+            
+            <!-- Verification code -->
+            <div class="form-row">
+              <div class="form-label">验证码</div>
+              <div class="form-input">
+                <div class="verification-container">
+                  <a-verification-code 
+                    v-model="value" 
+                    :length="4" 
+                    class="verification-input"
+                  />
+                  <button 
+                    class="verification-button" 
+                    :class="{ 'disabled': verStatus }"
+                    @click="vercode"
+                    :disabled="verStatus"
+                  >
+                    {{ verStatus ? `${countdown}秒后重试` : '获取验证码' }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="popup-footer">
+            <button 
+              class="login-button" 
+              @click="login" 
+              tabindex="0"
+            >
+              <i class="bi bi-box-arrow-in-right"></i>
+              登录系统
+            </button>
+          </div>
         </div>
-        <div class="submit-wrapper">
-          <div @click="login" class="submit" tabindex="0" @keyup.enter="login">登录</div>
-          <div @click="showPopup = false" class="close">关闭</div>
-        </div>        
       </div>
-  </div>
     </header>
 
     <main class="main">
@@ -183,15 +218,12 @@
     <!-- Preloader -->
     <div id="preloader"></div>
   </div>
-
 </template>
 
 
 <script setup>
-import { router } from '@/route/router';
 import { useUserStore } from '@/stores/user';
 import { onMounted, ref } from 'vue';
-import EmailEditOutline from 'vue-material-design-icons/EmailEditOutline.vue';
 
 const value = ref('');
 const email = ref('')
@@ -240,8 +272,8 @@ const login = () => {
   if (check()) {
     
     const res = user.login(email.value, value.value)
-    if (res === 'success') {
-      router.push('/dashboard')
+    if (res === 'error') { 
+      alert("登录失败，邮箱或验证码错误")
     }
   }
 }
@@ -262,104 +294,242 @@ onMounted(() => {
 </script>
 
 <style scoped>
-
-.submit-wrapper {
-  color: rgb(4, 90, 61);
-  font-weight: 600;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-
-.submit {
-  margin-right: 10px;
-  border-radius: 10px;
-  cursor: pointer;
-  padding: 10px;
-}
-
-.close {
-  border-radius: 10px;
-  cursor: pointer;
-  padding: 10px;
-}
-
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* 半透明黑色背景 */
-  z-index: 999; /* 确保覆盖内容 */
-}
-
-.ver-code-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.ver-code-button {
-  color: rgb(3, 104, 245);
-  font-size: 14px;
-  cursor: pointer;
-  font-weight: 300;
-  margin-left: 5px;
-}
-
-.ver-code-button-true {
-  color: rgb(113, 121, 132);
-  font-size: 14px;
-  cursor: pointer;
-  font-weight: 300;
-  margin-left: 5px;
-}
-
-.popup-title {
-  font-weight: 500px;
-  font-size: 28px;
-  margin-bottom: 10px;
-  color: rgb(239, 184, 5);
-}
-
-/* 弹出框 */
-.popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); /* 居中 */
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  z-index: 1000; /* 确保在遮罩层上方 */
-  width: 400px;
-  height: 300px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-}
-
-
-/* Add your CSS styles here, or import from main.css */
+/* Existing styles */
 .login {
   cursor: pointer;
   padding: 10px;
   border-radius: 10%;
 }
 
-
-.login:hover, .close:hover, .submit:hover {
-    background-color: #94939350;
+.login:hover {
+  background-color: rgba(148, 147, 147, 0.3);
 }
 
-.login:active, .close:hover, .submit:hover {
-    background-color: #a2a2a295;
+.login:active {
+  background-color: rgba(162, 162, 162, 0.58);
+}
+
+/* Overlay for modal background */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(3px);
+  z-index: 999;
+}
+
+/* Enhanced Login Popup Styles */
+.login-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 420px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.popup-header {
+  position: relative;
+  padding: 30px 30px 20px;
+  text-align: center;
+  background: linear-gradient(135deg, #0c8599, #0a6c7e);
+  color: white;
+}
+
+.popup-logo {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 15px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup-logo i {
+  font-size: 28px;
+}
+
+.popup-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.popup-subtitle {
+  margin: 5px 0 0;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.close-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.popup-body {
+  padding: 30px;
+}
+
+/* New form row layout for vertical alignment */
+.form-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.form-label {
+  width: 80px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  text-align: right;
+  margin-right: 15px;
+}
+
+.form-input {
+  flex: 1;
+}
+
+.styled-input {
+  width: 100%;
+  height: 46px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  transition: all 0.3s;
+}
+
+.styled-input:hover, .styled-input:focus {
+  border-color: #0c8599;
+  box-shadow: 0 0 0 3px rgba(12, 133, 153, 0.1);
+}
+
+.verification-container {
+  display: flex;
+  gap: 10px;
+}
+
+.verification-input {
+  flex: 1;
+}
+
+.verification-button {
+  min-width: 110px;
+  height: 46px;
+  background: #0c8599;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.verification-button:hover {
+  background: #0a6c7e;
+}
+
+.verification-button.disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+}
+
+.popup-footer {
+  padding: 0 30px 30px;
+}
+
+.login-button {
+  width: 100%;
+  height: 50px;
+  background: linear-gradient(135deg, #0c8599, #0a6c7e);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.login-button:hover {
+  background: linear-gradient(135deg, #0a6c7e, #085666);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(10, 108, 126, 0.3);
+}
+
+.login-button:active {
+  transform: translateY(0);
+}
+
+.login-button i {
+  font-size: 18px;
+}
+
+/* Override Arco Design styles */
+:deep(.arco-input-wrapper) {
+  background-color: transparent;
+}
+
+:deep(.arco-input) {
+  height: 46px;
+  font-size: 15px;
+}
+
+:deep(.arco-verification-code) {
+  height: 46px;
+}
+
+:deep(.arco-verification-code-item) {
+  border-radius: 8px;
+  border-color: #ddd;
+  font-size: 18px;
+}
+
+:deep(.arco-verification-code-item:focus) {
+  border-color: #0c8599;
+  box-shadow: 0 0 0 3px rgba(12, 133, 153, 0.1);
 }
 
 /* Fonts */
@@ -370,7 +540,5 @@ onMounted(() => {
 @import  '../assets/vendor/bootstrap/css/bootstrap.min.css';
 @import  '../assets/vendor/bootstrap-icons/bootstrap-icons.css';
 
-
 @import '../assets/css/main.css';
-
 </style>

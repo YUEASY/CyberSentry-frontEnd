@@ -11,21 +11,30 @@ export const useAppRMStore = defineStore('apprm', {
         appRMInfos: async () => {
             const resp = await appRMInfos()
             if (resp.result.status === 'success') {
-                return resp.result.data
+                return resp.result.data.map(item => ({
+                    ...item,
+                    icon_path: item.icon_path.split('/').pop().split('\\').pop()  // 兼容 Windows & Linux
+                }));
             }
             return "error"
         },
         appRMInfoAppId: async (id) => {
             const resp = await appRMInfoAppId(id)
-            if (resp.status === 'success') {
-                return resp.data
+            if (resp.result.status === 'success') {
+                return resp.result.data.map(item => ({
+                    ...item,
+                    icon_path: item.icon_path.split('/').pop().split('\\').pop(),  // 兼容 Windows & Linux
+                }));
             }
             return resp.status
         },
         appRMInfoId: async (id) => {
             const resp = await appRMInfoId(id)
-            if (resp.status === 'success') {
-                return resp.data
+            if (resp.result.status === 'success') {
+                return resp.result.data.map(item => ({
+                    ...item,
+                    icon_path: item.icon_path.split('/').pop().split('\\').pop()  // 兼容 Windows & Linux
+                }));
             }
             return resp.status
         },

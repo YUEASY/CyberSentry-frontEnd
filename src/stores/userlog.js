@@ -1,4 +1,4 @@
-import { createUserInfo, showUserInfoId } from "@/api/userlog";
+import { createUserInfo, showUserInfoId, showUserInfos } from "@/api/userlog";
 import { defineStore } from "pinia";
 
 export const useUserLogStore = defineStore('userlog', {
@@ -14,27 +14,27 @@ export const useUserLogStore = defineStore('userlog', {
             result_status: false
         }
     },
-    actions: () => {
+    actions: {
         createUserInfo: async (userLog) => {
             const resp = await createUserInfo(userLog)
-            if (resp.status === 'success') {
-                return resp.data
+            if (resp.result.status === 'success') {
+                return resp.result.data
             }
-            return resp.status
-        }
+            return resp.result.status
+        },
         showUserInfoId: async (id) => {
             const resp = await showUserInfoId(id)
-            if (resp.status === 'success') {
-                return resp.data
+            if (resp.result.status === 'success') {
+                return resp.result.data
             }
-            return resp.status
-        }
+            return resp.result.status
+        },
         showUserInfos: async () => {
             const resp = await showUserInfos()
-            if (resp.status === 'success') {
-                return resp.data
+            if (resp.result.status === 'success') {
+                return resp.result.data
             }
-            return resp.status
+            return resp.result.status
         }
     }
 })

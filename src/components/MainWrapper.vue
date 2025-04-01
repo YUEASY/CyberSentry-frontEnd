@@ -30,7 +30,7 @@ import AiWindow from './AiWindow.vue';
     height: 100vh;
     width: 100vw;
     background-size: cover;
-    background-color: #000000;
+    background-color: #1e1e1e;
     position: relative;
 }
 

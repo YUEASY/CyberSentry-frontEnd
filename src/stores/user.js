@@ -1,4 +1,5 @@
-import { login, vercode, update } from "@/api/user";
+import { login, vercode } from "@/api/user";
+import { router } from "@/route/router";
 import { defineStore } from "pinia";
 
 export const useUserStore = defineStore("user", {
@@ -10,7 +11,7 @@ export const useUserStore = defineStore("user", {
         role: "",
         email: "",
         phone: "",
-        last_login_ip: "",
+        last_login_ip: "192.168.1.101",
         last_login_time: "",
     }),
     actions: {
@@ -23,15 +24,17 @@ export const useUserStore = defineStore("user", {
                 this.role = data.role;
                 this.email = data.email;
                 this.phone = data.phone;
-                this.last_login_ip = data.last_login_ip;
+                // this.last_login_ip = data.last_login_ip;
                 this.last_login_time = data.last_login_time;
                 this.id = data.id;
 
                 localStorage.setItem('token', resp.result.token)
                 localStorage.setItem('user', JSON.stringify(resp.result.data))
+
+                router.push("/dashboard")
             }
             
-            return resp.result.status
+            return 'error'
         },
         async vercode(email) {
             const resp = await vercode(email);
@@ -41,11 +44,13 @@ export const useUserStore = defineStore("user", {
             return "error";
         },
         async update(user) {
-            const resp = await update(user);
-            if (resp && resp.result && resp.result.status === "success") {
-                return true;
-            }
-            return false;
+            this.phone = user.phone
+            return true
+            // const resp = await update(user);
+            // if (resp && resp.result && resp.result.status === "success") {
+            //     return true;
+            // }
+            // return false;
         },
         async logout() {
             this.user_id = -1;
@@ -53,9 +58,13 @@ export const useUserStore = defineStore("user", {
             this.role = "";
             this.email = "";
             this.phone = "";
-            this.last_login_ip = "";
+            // this.last_login_ip = "";
             this.last_login_time = "";
             this.id = -1;
+
+            localStorage.removeItem('user')
+            localStorage.removeItem('token')
+
         },
         userinfo () {
             const userStr = localStorage.getItem('user')
@@ -66,7 +75,7 @@ export const useUserStore = defineStore("user", {
                 this.role = data.role;
                 this.email = data.email;
                 this.phone = data.phone;
-                this.last_login_ip = data.last_login_ip;
+                // this.last_login_ip = data.last_login_ip;
                 this.last_login_time = data.last_login_time;
                 this.id = data.id;
             }

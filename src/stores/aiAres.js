@@ -6,7 +6,7 @@ import { defineStore } from "pinia";
 export const useAiAResStore = defineStore('aiAres', {
     state: () => {
         return {
-            list: "",
+            list: [],
             posts: [],
             loading: false
         }
@@ -34,16 +34,27 @@ export const useAiAResStore = defineStore('aiAres', {
         async aiAnalysisRes(id) {
             const resp = await aiAnalysisRes(id)
             if (resp.status === 'success') {
-                return  resp.data
-            }
-            return resp.status
-        },
-        aiAnalysisResUserId: async (user_id) => {
-            const resp = await aiAnalysisResUserId(user_id)
-            if (resp.result.status === 'success') {
-                return resp.result.data
+                return  resp.result.data
             }
             return resp.result.status
+        },
+        async aiAnalysisResUserId(user_id) {
+            const md = new MarkdownIt({
+                html: true,
+                linkify: true,
+                typographer: true,
+            });
+
+            const resp = await aiAnalysisResUserId(user_id)
+            if (resp.result.status === 'success') {
+
+                return resp.result.data.map(item => ({
+                    ...item,
+                    str: item.result,
+                    result: md.render(item.result)
+                }));
+            }
+            this.loading = false
         }
     },
 })

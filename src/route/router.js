@@ -8,10 +8,16 @@ import CheckboxBlankBadge from 'vue-material-design-icons/CheckboxBlankBadge.vue
 import CheckboxBlankBadgeOutline from 'vue-material-design-icons/CheckboxBlankBadgeOutline.vue';
 import HeadSnowflakeOutline from 'vue-material-design-icons/HeadSnowflakeOutline.vue';
 import HeadSnowflake from 'vue-material-design-icons/HeadSnowflake.vue';
-import Snail from 'vue-material-design-icons/Snail.vue';
+import ViewDashboard from 'vue-material-design-icons/ViewDashboard.vue';
 import UsrView from "@/view/UsrView.vue";
 import AiView from "@/view/AiView.vue";
 import AppDetailView from "@/view/AppDetailView.vue"
+import AiAnalysisView from "@/view/AiAnalysisView.vue"
+import FileOperationView from "@/view/FileOperationView.vue"
+import { FileTextOutlined } from "@ant-design/icons-vue";
+import { FileText } from "lucide-vue-next";
+import ChartTimelineVariant from 'vue-material-design-icons/ChartTimelineVariant.vue';
+import ChartTimelineVariantShimmer from 'vue-material-design-icons/ChartTimelineVariantShimmer.vue';
 
 
 const routes = [
@@ -20,8 +26,8 @@ const routes = [
     path: "/dashboard",
     name: "",
     component: MainCharts,
-    icon: Snail,
-    selectedIcon: Snail
+    icon: ViewDashboard,
+    selectedIcon:ViewDashboard,
   },
   {
     idx: 1,
@@ -38,7 +44,22 @@ const routes = [
     component: AiView,
     icon: HeadSnowflakeOutline,
     selectedIcon: HeadSnowflake
-
+  },
+  {
+    idx: 4,
+    path: "/ai-analysis",
+    name: "AI分析中心",
+    component: AiAnalysisView,
+    icon: ChartTimelineVariant,
+    selectedIcon: ChartTimelineVariantShimmer,
+  },
+  {
+    idx: 5,
+    path: "/file-operations",
+    name: "文件操作中心",
+    component: FileOperationView,
+    icon: FileTextOutlined,
+    selectedIcon: FileText,
   },
   {
     idx: 2,
@@ -50,6 +71,7 @@ const routes = [
 
   },
   {
+    idx: 6,
     path: "/apps/:id",
     component: AppDetailView,
     meta: { hideInMenu: true },

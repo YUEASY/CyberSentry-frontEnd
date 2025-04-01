@@ -1,7 +1,7 @@
 import api from "./axios"
 
 const appRMInfos = () => {
-    return api.get('/api/app_resource_monitors')
+    return api.get('/api/app_resource_monitors', {headers:{'Content-Type': 'application/json; charset=utf-8',}})
 }
 
 

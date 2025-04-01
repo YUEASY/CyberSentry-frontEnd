@@ -15,7 +15,8 @@ const vercode = (email) => {
 }
 
 const update = (user) => {
-    return api.post(`/api/user/${user.id}/update`, {
+
+    return api.post(`/api/user/${user.user_id}/update`, {
             "email": user.email,
             "phone": user.phone,
             "role": user.role,

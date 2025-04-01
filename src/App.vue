@@ -1,13 +1,13 @@
 <template>
-  <!-- <HomeView v-if="user.username === ''" /> -->
-  <MainWrapper />
+  <HomeView v-if="user.username === ''" />
+  <MainWrapper v-else/>
 </template>
 
 <script setup>                                             
 import { onMounted } from 'vue';
 import MainWrapper from './components/MainWrapper.vue';
 import { useUserStore } from './stores/user';
-// import HomeView from './view/HomeView.vue';
+import HomeView from './view/HomeView.vue';
 
 const user = useUserStore()
 

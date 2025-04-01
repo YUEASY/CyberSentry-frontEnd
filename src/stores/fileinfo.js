@@ -11,34 +11,37 @@ export const useFileInfoStore = defineStore('fileinfo', {
             secret_key: ""
         }
     },
-    actions: () => {
+    actions: {
         files: async () => {
             const resp = await files()
             if (resp.status === 'success') {
                 return resp.data
             }
             return resp.status
-        }
+        },
         fileId: async (id) => {
             const resp = await fileId(id)
             if (resp.status === 'success') {
                 return resp.data
             }
             return resp.status
-        }
+        },
         fileEncrypt: async (file) => {
             const resp = await fileEncrypt(file)
-            if (resp.status === 'success') {
-                return resp.data
+            if (resp.result.status === 'success') {
+                return resp.result.data
             }
             return resp.status
-        }
+        },
         fileDecrypt: async (file) => {
             const resp = await fileDecrypt(file)
-            if (resp.status === 'success') {
-                return resp.data
+            if (resp.result.status === 'success') {
+                return resp.result.data
             }
-            return resp.status
+            return resp.result.status
+        },
+        fileDelete: () => {
+            return 'success'
         }
     }
 })

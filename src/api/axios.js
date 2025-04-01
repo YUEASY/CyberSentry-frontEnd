@@ -21,6 +21,8 @@ api.interceptors.request.use(
       if (token) {
         // 在请求头中添加 token
         config.headers['token'] = token;
+        config.headers['Content-Type'] = 'application/json; charset=utf-8'
+
       } else {
         // 如果没有 token，可以跳转到登录页面或抛出错误
         return Promise.reject(new Error('No token found'));
@@ -39,17 +41,17 @@ api.interceptors.response.use(
   (response) => {
     const res = response.data;
     // if the custom code is not 20000, it is judged as an error.
-    // if (res.code !== 20000) {
-    //   // remind users
+    if (res.code !== 20000) {
+      // remind users
 
-    //   // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-    //   if ([50008, 50012, 50014].includes(res.code)) {
-    //     // 清除 token 并跳转到登录页面
-    //     localStorage.removeItem('token');
-    //     window.location.href = '/login';
-    //   }
-    //   return Promise.reject(new Error(res.msg || 'Error'));
-    // }
+      // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
+      if ([401].includes(res.code)) {
+        // 清除 token 并跳转到登录页面
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/';
+      }
+    }
     return res;
   },
   (error) => {

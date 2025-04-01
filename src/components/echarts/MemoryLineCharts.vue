@@ -85,7 +85,7 @@ const chartOptions = ref({
   <ECharts 
     :options="chartOptions" 
     width="100%" 
-    height="233px"
+    height="400px"
     custom-class="custom-chart"
     :custom-style="{}"
   />

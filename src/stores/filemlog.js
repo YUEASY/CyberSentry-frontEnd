@@ -15,17 +15,17 @@ export const useFileMLogStore = defineStore("filemlog", {
     actions: {
         async fileModiLogsId(id) {
             const resp = await fileModiLogsId(id)
-            if (resp.status === "success") {
-                return resp.data
+            if (resp.result.status === "success") {
+                return resp.result.data
             }
-            return resp.status
+            return resp.result.status
         },
         async fileModiLogs() {
             const resp = await fileModiLogs()
-            if (resp.status === "success") {
-                return resp.data
+            if (resp.result.status === "success") {
+                return resp.result.data
             }
-            return resp.status
+            return resp.result.status
         },
     },
 })

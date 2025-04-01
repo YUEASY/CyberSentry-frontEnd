@@ -16,7 +16,7 @@ const batteryFlagMap = [
 
 const check = (a) => {
     console.log("a", a)
-    return batteryFlagMap.find(t => t.type === a) || { type: '电池状态未知', value: 0 };
+    return batteryFlagMap.find(t => t.type === a) || {type: '电池电量高', value: 90};
 };
 
 const props = defineProps({
