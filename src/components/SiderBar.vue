@@ -30,7 +30,7 @@ const handleRouteClick = (route) => {
 // Handle logout
 const handleLogout = () => {
   user.logout();
-  router.push('/');
+  window.location.href = '/';
 };
 
 // Get first letter of username for avatar

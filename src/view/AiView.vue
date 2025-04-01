@@ -5,7 +5,9 @@
         <div class="ai-view-header">
           <div class="header-left">
             <div class="header-icon">
-              <HeadSnowflake size="28" />
+              <HeadSnowflake size="28" > 
+                
+              </HeadSnowflake>
             </div>
             <div class="header-title">
               <h1>AI 安全助手</h1>

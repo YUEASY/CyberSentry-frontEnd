@@ -48,7 +48,7 @@ const fetchData = async () => {
     
     if (Array.isArray(infos.value) && infos.value.length > 0) {
       lastInfo.value = infos.value[infos.value.length - 1]; 
-      crisisValue.value = (((lastInfo.value.cpu_usage / 4) * 3 + lastInfo.value.memory_usage / 16 / 4 / 1024) % 110).toFixed(2);
+      crisisValue.value = (((lastInfo.value.cpu_usage / 4) * 3 + lastInfo.value.memory_usage / 16 / 4 ) % 110).toFixed(2);
     } else {
       crisisValue.value = 0; 
     }
@@ -128,7 +128,7 @@ const cpuLoad = computed(() => {
 });
 
 const memoryLoad = computed(() => {
-  return (lastInfo.value?.memory_usage / 16 / 1024)?.toFixed(2) || '0.00';
+  return (lastInfo.value?.memory_usage / 16 )?.toFixed(2) || '0.00';
 });
 
 const diskLoad = computed(() => {
@@ -150,7 +150,7 @@ const diskLoad = computed(() => {
           <RefreshCw :class="{'spin': isLoading}" />
         </button>
       </div>
-      
+
       <div class="sidebar-section">
         <h3 class="section-title">系统状态</h3>
         <div class="system-gauges">
@@ -170,18 +170,14 @@ const diskLoad = computed(() => {
           </div>
         </div>
       </div>
-      
+
       <div class="sidebar-section">
         <h3 class="section-title">安全监控</h3>
-        <div 
-          class="security-alert" 
-          :class="{ 'has-alerts': mthreadnum > 0 }"
-          @click="openPopup"
-        >
+        <div class="security-alert" :class="{ 'has-alerts': mthreadnum > 0 }" @click="openPopup">
           <AlertTriangle size="20" />
           <span>恶意线程 ({{ mthreadnum }})</span>
         </div>
-        
+
         <!-- Replace the existing system-status div with this enhanced version -->
         <div class="system-status">
           <div class="status-header">
@@ -190,19 +186,16 @@ const diskLoad = computed(() => {
               {{ getLoadStatus(crisisValue).text }}
             </div>
           </div>
-          
+
           <div class="progress-bar-container">
-            <div 
-              class="progress-bar" 
-              :style="{ 
+            <div class="progress-bar" :style="{ 
                 width: `${Math.min(crisisValue, 100)}%`, 
                 backgroundColor: crisisValue < 33 ? '#52c41a' : crisisValue < 66 ? '#faad14' : '#ff4d4f' 
-              }"
-            ></div>
+              }"></div>
           </div>
-          
+
           <div class="status-value-display">{{ crisisValue }}%</div>
-          
+
           <div class="load-details">
             <div class="load-item">
               <div class="load-label">CPU</div>
@@ -214,95 +207,78 @@ const diskLoad = computed(() => {
             </div>
             <div class="load-item">
               <div class="load-label">磁盘</div>
-              <div class="load-value" :style="{ color: getLoadStatus(diskLoad).color }">{{ diskLoad }} MB/s</div>
+              <div class="load-value" :style="{ color: getLoadStatus(diskLoad).color }">{{ diskLoad }} %</div>
             </div>
           </div>
-          
+
           <div class="load-recommendation" v-if="crisisValue > 66">
             <AlertTriangle size="14" />
             <span>建议关闭不必要的应用以降低系统负载</span>
           </div>
         </div>
       </div>
-      
+
     </div>
-    
+
     <!-- Center content: Main charts -->
     <div class="dashboard-main">
       <div class="main-header">
         <h2>系统性能监控</h2>
       </div>
-      
+
       <div class="main-content">
-        <component 
-          :is="components[activeChart]" 
-          :infos="infos" 
-          class="main-chart"
-        />
+        <component :is="components[activeChart]" :infos="infos" class="main-chart" />
       </div>
     </div>
-    
+
     <!-- Right sidebar: Metrics and app list -->
     <div class="dashboard-metrics">
       <div class="metrics-container">
-        <div 
-          class="metric-card" 
-          :class="{ active: activeChart === 'CpuLineCharts'}"
-          @click="activeChart = 'CpuLineCharts'"
-        >
+        <div class="metric-card" :class="{ active: activeChart === 'CpuLineCharts'}"
+          @click="activeChart = 'CpuLineCharts'">
           <div class="metric-header">
             <Cpu size="18" />
             <span>CPU</span>
           </div>
           <div class="metric-value">{{ lastInfo?.cpu_usage?.toFixed(2) || '0.00' }}%</div>
         </div>
-        
-        <div 
-          class="metric-card" 
-          :class="{ active: activeChart === 'MemoryLineCharts'}"
-          @click="activeChart = 'MemoryLineCharts'"
-        >
+
+        <div class="metric-card" :class="{ active: activeChart === 'MemoryLineCharts'}"
+          @click="activeChart = 'MemoryLineCharts'">
           <div class="metric-header">
             <Database size="18" />
             <span>内存</span>
           </div>
-          <div class="metric-value">{{ (lastInfo?.memory_usage / 16 / 1024)?.toFixed(2) || '0.00' }}%</div>
+          <div class="metric-value">{{ (lastInfo?.memory_usage / 16 )?.toFixed(2) || '0.00' }}%</div>
         </div>
-        
-        <div 
-          class="metric-card" 
-          :class="{ active: activeChart === 'DiskCharts'}"
-          @click="activeChart = 'DiskCharts'"
-        >
+
+        <div class="metric-card" :class="{ active: activeChart === 'DiskCharts'}" @click="activeChart = 'DiskCharts'">
           <div class="metric-header">
             <HardDrive size="18" />
             <span>磁盘</span>
           </div>
-          <div class="metric-value">{{ lastInfo?.disk_usage?.toFixed(2) || '0.00' }} MB/s</div>
+          <div class="metric-value">{{ lastInfo?.disk_usage?.toFixed(2) || '0.00' }} %</div>
         </div>
-        
-        <div 
-          class="metric-card" 
-          :class="{ active: activeChart === 'NetworkCharts'}"
-          @click="activeChart = 'NetworkCharts'"
-        >
+
+        <div class="metric-card" :class="{ active: activeChart === 'NetworkCharts'}"
+          @click="activeChart = 'NetworkCharts'">
           <div class="metric-header">
             <Network size="18" />
             <span>网络</span>
           </div>
           <div class="metric-value">
-            <div>↓ {{ lastInfo?.network_download?.toFixed(2) || '0.00' }} MB/s</div>
-            <div>↑ {{ lastInfo?.network_upload?.toFixed(2) || '0.00' }} MB/s</div>
+            <div>↓ {{ lastInfo?.network_download?.toFixed(2) || '0.00' }} kb/s</div>
+            <div>↑ {{ lastInfo?.network_upload?.toFixed(2) || '0.00' }} kb/s</div>
           </div>
         </div>
       </div>
-      
+
       <div class="app-list-container">
         <h3 class="section-title">应用监控</h3>
         <AppList :crisisValue="crisisValue" />
       </div>
     </div>
-    
+
     <!-- Malicious thread popup -->
     <div v-if="showPopup" class="overlay" @click="closePopup"></div>
     <div v-if="showPopup" class="popup">
@@ -312,25 +288,22 @@ const diskLoad = computed(() => {
           <X size="18" />
         </button>
       </div>
-      
+
       <div class="popup-content">
         <div v-if="mthreadLogs.length === 0" class="empty-state">
           <AlertTriangle size="48" />
           <p>暂无恶意线程记录</p>
         </div>
-        
+
         <div v-else class="thread-list">
           <div v-for="(thread, index) in mthreadLogs" :key="index" class="thread-item">
             <div class="thread-header">
               <span class="thread-name">{{ thread.thread_name }}</span>
-              <span 
-                class="risk-badge"
-                :style="{ backgroundColor: formatRiskLevel(thread.risk_level).color }"
-              >
+              <span class="risk-badge" :style="{ backgroundColor: formatRiskLevel(thread.risk_level).color }">
                 {{ formatRiskLevel(thread.risk_level).text }}
               </span>
             </div>
-            
+
             <div class="thread-details">
               <div class="thread-detail">
                 <span class="detail-label">应用ID:</span>

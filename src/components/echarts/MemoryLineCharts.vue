@@ -11,7 +11,7 @@ const props = defineProps({
 // 初始化数据
 const initializeData = () => {
   props.infos.forEach(info => {
-    data.value.push([new Date(info.sample_time).getTime(), (info.memory_usage / 1024)?.toFixed(2)]);
+    data.value.push([new Date(info.sample_time).getTime(), (info.memory_usage / 16)?.toFixed(2)]);
   });
   
 };
@@ -20,7 +20,7 @@ watch(() => props.infos, (newInfos) => {
   data.value = []
 
   newInfos.forEach(info => {
-    data.value.push([new Date(info.sample_time).getTime(), (info.memory_usage / 1024)?.toFixed(2)]);
+    data.value.push([new Date(info.sample_time).getTime(), (info.memory_usage / 16)?.toFixed(2)]);
   });
 
   chartOptions.value.series[0].data = data.value;

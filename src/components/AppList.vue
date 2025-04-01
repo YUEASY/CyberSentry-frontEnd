@@ -159,10 +159,8 @@ const getProgressBarColor = (value) => {
 // Get power level color
 const getPowerLevelColor = (level) => {
   if (!level) return 'gray';
-  const numLevel = Number(level);
-  if (numLevel >= 4) return '#ff4d4f';
-  if (numLevel >= 3) return '#faad14';
-  if (numLevel >= 2) return '#1890ff';
+  if (level == '高') return '#ff4d4f';
+  if (level == '中') return '#faad14';
   return '#52c41a';
 };
 
@@ -246,7 +244,7 @@ const sortedMemoryApps = computed(() => {
         >
           <div class="app-icon-container">
             <img 
-              :src="app.icon_path ? `/api/api/get_image/${app.icon_path}` : defineIcon"
+              :src="app.icon_path ? `/api/api/get_image/${app.icon_path.replace(/\\/g, '/').split('/').pop()}` : defineIcon"
               :alt="app.app_name"
               class="app-icon"
             />
@@ -263,7 +261,7 @@ const sortedMemoryApps = computed(() => {
                   }"
                 ></div>
               </div>
-              <div class="usage-value">{{ app.cpu_usage?.toFixed(2) }}%</div>
+              <div class="usage-value">{{ Math.min(app.cpu_usage, 100).toFixed(2) }}%</div>
             </div>
           </div>
         </div>
@@ -283,7 +281,7 @@ const sortedMemoryApps = computed(() => {
         >
           <div class="app-icon-container">
             <img 
-              :src="app.icon_path ? `/api/api/get_image/${app.icon_path}` : defineIcon"
+              :src="app.icon_path ? `/api/api/get_image/${app.icon_path.replace(/\\/g, '/').split('/').pop()}` : defineIcon"
               :alt="app.app_name"
               class="app-icon"
             />
@@ -295,12 +293,12 @@ const sortedMemoryApps = computed(() => {
                 <div 
                   class="usage-progress" 
                   :style="{ 
-                    width: `${Math.min((app.memory_usage_mb / 1024 / 16), 100)}%`,
-                    backgroundColor: getResourceColor(app.memory_usage_mb / 1024 / 16)
+                    width: `${Math.min((app.memory_usage_mb / 16), 100)}%`,
+                    backgroundColor: getResourceColor(app.memory_usage_mb / 16)
                   }"
                 ></div>
               </div>
-              <div class="usage-value">{{ (app.memory_usage_mb / 1024 / 16)?.toFixed(2) }}%</div>
+              <div class="usage-value">{{ (app.memory_usage_mb / 16)?.toFixed(2) }}%</div>
             </div>
           </div>
         </div>
@@ -326,7 +324,7 @@ const sortedMemoryApps = computed(() => {
         <div class="app-info-section">
           <div class="app-icon-large">
             <img 
-              :src="detaileData.icon_path ? `/api/api/get_image/${detaileData.icon_path}` : defineIcon"
+              :src="detaileData.icon_path ? `/api/api/get_image/${decodeURIComponent(detaileData.icon_path).replace(/\\/g, '/').split('/').pop()}` : defineIcon"
               :alt="detaileData.app_name"
             />
           </div>
@@ -352,7 +350,7 @@ const sortedMemoryApps = computed(() => {
               <Cpu size="16" />
               <span>CPU 使用率</span>
             </div>
-            <div class="resource-value">{{ detaileData.cpu_usage?.toFixed(2) || '0.00' }}%</div>
+            <div class="resource-value">{{ Math.min(detaileData.cpu_usage || 0, 100).toFixed(2) }}%</div>
             <div class="resource-bar">
               <div 
                 class="resource-progress" 
@@ -370,14 +368,14 @@ const sortedMemoryApps = computed(() => {
               <span>内存使用率</span>
             </div>
             <div class="resource-value">
-              {{ (detaileData.memory_usage_mb / 1024 / 16)?.toFixed(2) || '0.00' }}%
+              {{ (detaileData.memory_usage_mb  / 16)?.toFixed(2) || '0.00' }}%
             </div>
             <div class="resource-bar">
               <div 
                 class="resource-progress" 
                 :style="{ 
-                  width: `${Math.min((detaileData.memory_usage_mb / 1024 / 16) || 0, 100)}%`,
-                  backgroundColor: getResourceColor(detaileData.memory_usage_mb / 1024 / 16)
+                  width: `${Math.min((detaileData.memory_usage_mb  / 16) || 0, 100)}%`,
+                  backgroundColor: getResourceColor(detaileData.memory_usage_mb  / 16)
                 }"
               ></div>
             </div>

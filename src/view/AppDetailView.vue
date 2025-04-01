@@ -11,7 +11,9 @@
       </div> -->
       <div class="header-actions">
         <a-button type="outline" size="small" @click="refreshData" :loading="loading">
-          <template #icon><RefreshCw size="14" /></template>
+          <template #icon>
+            <RefreshCw size="14" />
+          </template>
           刷新
         </a-button>
       </div>
@@ -29,7 +31,9 @@
       <div class="app-info-card">
         <div class="app-info-section">
           <div class="app-icon-container">
-            <img :src="appInfo.icon_path === '' ? '../../public/icon.png' : `/api/api/get_image/${appInfo.icon_path}`" alt="App Icon" class="app-icon" />
+            <img
+              :src="appInfo.icon_path === '' ? '../../public/icon.png' : `/api/api/get_image/${appInfo.icon_path.replace(/\\/g, '/').split('/').pop()}`"
+              alt="App Icon" class="app-icon" style="width: 100%; height: 100%; object-fit: contain;" />
           </div>
           <div class="app-info">
             <div class="app-header">
@@ -52,21 +56,20 @@
             <div class="control-item">
               <span class="control-label">反录屏</span>
               <a-switch v-model="controls.antiScreenRecording"
-                @change="updateRule('is_recording_prevention_enabled', controls.antiScreenRecording)" 
-                type="round" checked-color="#14C9C9" unchecked-color="#F53F3F" />
+                @change="updateRule('is_recording_prevention_enabled', controls.antiScreenRecording)" type="round"
+                checked-color="#14C9C9" unchecked-color="#F53F3F" />
               <span class="control-hint">反录屏、截屏</span>
             </div>
             <div class="control-item">
               <span class="control-label">运行保护</span>
               <a-switch v-model="controls.runtimeProtection"
-                @change="updateRule('is_protected', controls.runtimeProtection)" 
-                type="round" checked-color="#14C9C9" unchecked-color="#F53F3F" />
+                @change="updateRule('is_protected', controls.runtimeProtection)" type="round" checked-color="#14C9C9"
+                unchecked-color="#F53F3F" />
               <span class="control-hint">保护应用不被篡改</span>
             </div>
             <div class="control-item">
               <span class="control-label">伪装</span>
-              <a-switch v-model="controls.camouflage" 
-                @change="updateRule('is_camouflaged', controls.camouflage)" 
+              <a-switch v-model="controls.camouflage" @change="updateRule('is_camouflaged', controls.camouflage)"
                 type="round" checked-color="#14C9C9" unchecked-color="#F53F3F" />
               <span class="control-hint">伪装应用id</span>
             </div>
@@ -132,8 +135,8 @@
           </div>
         </div> -->
 
-        <!-- File modification section -->
-        <!-- <div class="detail-card">
+      <!-- File modification section -->
+      <!-- <div class="detail-card">
           <div class="card-header">
             <h3>文件修改记录</h3>
             <a-button type="text" class="view-all-button">查看全部</a-button>
